@@ -46,34 +46,33 @@
     </div>
     <nav class="flex flex-col gap-4" id="menuLinks">
       <a href="#" data-site="facebook" class="menu-link flex items-center gap-3 text-white hover:text-blue-400 transition menu-active">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M22 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54v-2.89h2.54V9.845c0-2.507 1.493-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.242 0-1.63.771-1.63 1.562v1.88h2.773l-.443 2.89h-2.33V22C18.343 21.128 22 16.991 22 12z"/>
-        </svg>
+  <img src="fb.svg" alt="Instagram" class="w-6 h-6"  />
+  
         Facebook Downloader
       </a>
       <a href="#" data-site="instagram" class="menu-link flex items-center gap-3 text-white hover:text-pink-400 transition">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="..."/>
-        </svg>
-        Instagram Downloader
-      </a>
+  <img src="ig.svg" alt="Instagram" class="w-6 h-6" />
+  Instagram Downloader
+</a>
+
       <a href="#" data-site="tiktok" class="menu-link flex items-center gap-3 text-white hover:text-purple-400 transition">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="..."/>
-        </svg>
+          <img src="tt.svg" alt="Instagram" class="w-6 h-6" />
+  
         TikTok Downloader
       </a>
       <a href="#" data-site="youtube" class="menu-link flex items-center gap-3 text-white hover:text-red-400 transition">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="..."/>
-        </svg>
+        <img src="yt.svg" alt="Instagram" class="w-6 h-6" />
+  
         YouTube Mp4 Downloader
       </a>
       <a href="#" data-site="youtubeMp3" class="menu-link flex items-center gap-3 text-white hover:text-red-400 transition">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="..."/>
-        </svg>
+        <img src="yt.svg" alt="Instagram" class="w-6 h-6" />
         YouTube Mp3 Downloader
+      </a>
+      <a href="#" data-site="AboutUs" class="menu-link flex items-center gap-3 text-white hover:text-red-400 transition">
+  <img src="ab.svg" alt="Instagram" class="w-6 h-6"  />
+  
+        About Us
       </a>
     </nav>
   </div>
@@ -200,7 +199,7 @@ function hideLoading() {
     return;
   }
 
-  status.textContent = "🔄 Fetching download link...";
+ // status.textContent = "🔄 Fetching download link...";
   status.classList.remove("hidden", "text-red-400");
   status.classList.add("text-gray-300");
 
@@ -238,7 +237,7 @@ function hideLoading() {
           throw new Error("Invalid TikTok video URL.");
         }
       })
-      .catch(handleError)
+      
       .finally(() => hideLoading());
 
   } else if (activePlatform === "instagram") {
@@ -252,7 +251,7 @@ function hideLoading() {
           throw new Error("Invalid Instagram video URL.");
         }
       })
-      .catch(handleError)
+      
       .finally(() => hideLoading());
 
   } else if (activePlatform === "youtube") {
@@ -312,8 +311,36 @@ function hideLoading() {
     status.classList.add("text-yellow-400");
   }
             }
+  
+  function triggerDownload(downloadUrl, filename = "video.mp4") {
+ //   status.textContent = "✅ Downloading video...";
+    status.classList.remove("text-red-400", "text-gray-300");
+    status.classList.add("text-green-400");
+
+    fetch(downloadUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.
+revokeObjectURL(blobUrl);
+      })
+      .catch(handleError);
+  }
+
+  function handleError(err) {
+    console.error(err);
+    status.textContent = "❌ Failed to get download link. Please check the URL.";
+    status.classList.remove("text-green-400", "text-gray-300");
+    status.classList.add("text-red-400");
+  }
           
 
           </script>
 </body>
-</html>
+  </html>
