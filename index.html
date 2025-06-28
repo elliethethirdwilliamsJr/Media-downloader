@@ -180,17 +180,29 @@
     status.classList.remove("hidden", "text-red-400");
     status.classList.add("text-gray-300");
 
-    if (activePlatform === "facebook") {
-      fetch(`https://api.codetabs.com/v1/proxy/?quest=https://facebook-video.vercel.app/?url=${encodeURIComponent(url)}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.success && data.download) {
-            triggerDownload(data.download, "facebook-video.mp4");
-          } else {
-            throw new Error("Invalid Facebook video URL.");
-          }
-        })
-        .catch(handleError);
+    else if (activePlatform === "facebook") {
+  fetch(`https://mediadownloaderapi-olkd.onrender.com/api/facebook?url=${encodeURIComponent(url)}`)
+    .then(res => res.json())
+    .then(data => {
+      console.log("FB data", data);
+
+      const hdUrl = data?.data?.HD;
+
+      if (data.success && hdUrl) {
+        const a = document.createElement("a");
+        a.href = hdUrl;
+        a.download = "facebook-video.mp4";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        throw new Error("Invalid Facebook video URL or HD not available");
+      }
+    })
+    .catch(handleError);
+    }
+    
+    
     } else if (activePlatform === "tiktok") {
       fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/tiktok?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
