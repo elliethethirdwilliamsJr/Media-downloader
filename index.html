@@ -227,18 +227,24 @@ function hideLoading() {
       .finally(() => hideLoading());
 
   } else if (activePlatform === "tiktok") {
-    showLoading();
-    fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/tiktok?url=${encodeURIComponent(url)}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.data?.video?.length) {
-          triggerDownload(data.data.video[0], "tiktok-video.mp4");
-        } else {
-          throw new Error("Invalid TikTok video URL.");
-        }
-      })
-      
-      .finally(() => hideLoading());
+  showLoading();
+  fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/tiktok?url=${encodeURIComponent(url)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.data?.video?.length) {
+          const rawTitle = data.data.title || "tiktok-video";
+        const safeTitle = rawTitle.replace(/[^a-z0-9_\- ]/gi, '').substring(0, 80); // remove symbols and trim
+        const fileName = `${safeTitle}.mp4`;
+        triggerDownload(data.data.video[0], fileName);
+      } else {
+        throw new Error("Invalid TikTok video URL.");
+      }
+    })
+    .catch(err => {
+      alert("Failed to download video: " + err.message);
+    })
+    .finally(() => hideLoading());
+}
 
   } else if (activePlatform === "instagram") {
     showLoading();
@@ -343,4 +349,4 @@ revokeObjectURL(blobUrl);
 
           </script>
 </body>
-  </html>
+</html>
