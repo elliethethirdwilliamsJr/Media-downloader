@@ -215,20 +215,28 @@
         .catch(handleError);
     }
 
-    // ✅ YouTube MP4
-    else if (activePlatform === "youtube") {
-      fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
-        .then(res => res.json())
-        .then(data => {
-          const mp4Url = data?.data?.mp4;
-          if (data.success && mp4Url) {
-            triggerDownload(mp4Url, "youtube-video.mp4");
-          } else {
-            throw new Error("Invalid YouTube video URL.");
-          }
-        })
-        .catch(handleError);
-    }
+// ✅ YouTube MP4 Downloader
+else if (activePlatform === "youtube") {
+  fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+    .then(res => res.json())
+    .then(data => {
+      const mp4Url = data?.data?.mp4;
+
+      if (data.success && mp4Url) {
+        // 🔍 Determine file extension
+        const ext = mp4Url.includes(".mp4") ? ".mp4" :
+                    mp4Url.includes(".webm") ? ".webm" :
+                    ""; // fallback
+
+        // ⬇️ Trigger download
+        triggerDownload(mp4Url, `youtube-video${ext}`);
+      } else {
+        throw new Error("Invalid YouTube video URL or MP4 not available.");
+      }
+    })
+    .catch(handleError);
+}
+
 
     // ✅ YouTube MP3
     else if (activePlatform === "youtubeMp3") {
