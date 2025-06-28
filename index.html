@@ -192,7 +192,7 @@
         })
         .catch(handleError);
     } else if (activePlatform === "tiktok") {
-      fetch(`https://mediadownloaderapi-olkd.onrender.com/api/tiktok?url=${encodeURIComponent(url)}`)
+      fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/tiktok?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
         .then(data => {
           if (data.success && data.data?.video?.length) {
@@ -203,7 +203,7 @@
         })
         .catch(handleError);
     } else if (activePlatform === "instagram") {
-      fetch(`https://mediadownloaderapi-olkd.onrender.com/api/instagram?url=${encodeURIComponent(url)}`)
+      fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/instagram?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
         .then(data => {
           if (data.success && data.data?.length) {
@@ -217,7 +217,7 @@
 
     // ✅ YouTube MP4
     else if (activePlatform === "youtube") {
-      fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+      fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
         .then(data => {
           const mp4Url = data?.data?.mp4;
@@ -232,7 +232,7 @@
 
     // ✅ YouTube MP3
     else if (activePlatform === "youtubeMp3") {
-      fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+      fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
         .then(data => {
           const mp3Url = data?.data?.mp3;
