@@ -232,18 +232,29 @@
 
     // ✅ YouTube MP3
     else if (activePlatform === "youtubeMp3") {
-      fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
-        .then(res => res.json())
-        .then(data => {
-          const mp3Url = data?.data?.mp3;
-          if (data.success && mp3Url) {
-            triggerDownload(mp3Url, "youtube-audio.mp3");
-          } else {
-            throw new Error("Invalid YouTube audio URL.");
-          }
-        })
-        .catch(handleError);
+  fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+    .then(res => res.json())
+    .then(data => {
+      const mp3Url = data?.data?.mp3;
+
+      if (data.success && mp3Url) {
+        const anchor = document.createElement("a");
+        anchor.href = mp3Url;
+        anchor.download = "youtube-audio.mp3";
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+      } else {
+        alert("Failed to get audio link.");
+        console.error("Invalid or missing MP3:", data);
+      }
+    })
+    .catch((err) => {
+      console.error("Error fetching MP3:", err);
+      alert("Something went wrong.");
+    });
     }
+      
 
     else {
       status.textContent = "🚧 Downloader for this platform is not implemented yet.";
