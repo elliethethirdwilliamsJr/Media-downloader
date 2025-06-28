@@ -155,7 +155,8 @@
       });
     });
 
-    function downloadMedia() {
+    <script>
+  function downloadMedia() {
     const url = input.value.trim();
     const activePlatform = document.querySelector('.menu-link.menu-active')?.dataset?.site;
 
@@ -173,43 +174,42 @@
       return;
     }
 
-    status.textContent = "🔄 Fetching video download link...";
+    status.textContent = "🔄 Fetching download link...";
     status.classList.remove("hidden", "text-red-400");
     status.classList.add("text-gray-300");
 
-    fetch(`https://api.codetabs.com/v1/proxy/?quest=https://facebook-video.vercel.app/?url=${encodeURIComponent(url)}`)
+    const proxyAPI = `https://api.codetabs.com/v1/proxy/?quest=https://facebook-video.vercel.app/?url=${encodeURIComponent(url)}`;
+
+    fetch(proxyAPI)
       .then(res => res.json())
       .then(data => {
-        alert(data)
-        if (data.success && data.download) {
-          status.textContent = "✅ Download link ready! Starting download...";
-          status.classList.remove("text-red-400");
-          status.classList.add("text-green-400");
+        if (!data.success || !data.download) throw new Error("No download link found.");
 
-          // Trigger download
-          const a = document.createElement("a");
-          a.href = data.download;
-          a.download = "facebook-video.mp4";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        } else {
-          throw new Error("Invalid or unsupported video.");
-        }
+        const fileUrl = data.download;
+
+        status.textContent = "📥 Downloading video...";
+        status.classList.remove("text-red-400", "text-gray-300");
+        status.classList.add("text-green-400");
+
+        // Fetch the file and trigger download
+        fetch(fileUrl)
+          .then(res => res.blob())
+          .then(blob => {
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "facebook-video.mp4";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+          });
       })
       .catch(err => {
         console.error(err);
-        status.textContent = "❌ Failed to get download link. Please check the URL.";
-        status.classList.remove("text-green-400");
+        status.textContent = "❌ Failed to download. Please check the video URL.";
+        status.classList.remove("text-green-400", "text-gray-300");
         status.classList.add("text-red-400");
       });
   }
-  </script>
-  <script>
-  // ...existing variables and setup...
-
-  
 </script>
-
 </body>
-</html>
