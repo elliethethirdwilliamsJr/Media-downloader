@@ -261,55 +261,60 @@ function hideLoading() {
       .finally(() => hideLoading());
 
   } else if (activePlatform === "youtube") {
-    showLoading();
-    fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("YT data", data);
-        const mp4Url = data?.data?.mp4;
+  showLoading();
+  fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+    .then(res => res.json())
+    .then(data => {
+      const mp4Url = data?.data?.mp4;
+      const rawTitle = data?.data?.title || "youtube-video";
+      const safeTitle = rawTitle.replace(/[^a-z0-9_\- ]/gi, '').substring(0, 80);
+      const fileName = `${safeTitle}.mp4`;
 
-        if (data.success && mp4Url) {
-          const anchor = document.createElement("a");
-          anchor.href = mp4Url;
-          anchor.download = "youtube-video.mp4";
-          document.body.appendChild(anchor);
-          anchor.click();
-          document.body.removeChild(anchor);
-        } else {
-          alert("Failed to get video link.");
-          console.error("Invalid or missing MP4:", data);
-        }
-      })
-      .catch(err => {
-        console.error("Error fetching MP4:", err);
-        alert("Something went wrong.");
-      })
-      .finally(() => hideLoading());
+      if (data.success && mp4Url) {
+        const anchor = document.createElement("a");
+        anchor.href = mp4Url;
+        anchor.download = fileName;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+      } else {
+        alert("Failed to get video link.");
+        console.error("Invalid or missing MP4:", data);
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching MP4:", err);
+      alert("Something went wrong.");
+    })
+    .finally(() => hideLoading());
 
   } else if (activePlatform === "youtubeMp3") {
-    showLoading();
-    fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
-      .then(res => res.json())
-      .then(data => {
-        const mp3Url = data?.data?.mp3;
+  showLoading();
+  fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+    .then(res => res.json())
+    .then(data => {
+      const mp3Url = data?.data?.mp3;
+      const rawTitle = data?.data?.title || "youtube-audio";
+      const safeTitle = rawTitle.replace(/[^a-z0-9_\- ]/gi, '').substring(0, 80);
+      const fileName = `${safeTitle}.mp3`;
 
-        if (data.success && mp3Url) {
-          const anchor = document.createElement("a");
-          anchor.href = mp3Url;
-          anchor.download = "youtube-audio.mp3";
-          document.body.appendChild(anchor);
-          anchor.click();
-          document.body.removeChild(anchor);
-        } else {
-          alert("Failed to get audio link.");
-          console.error("Invalid or missing MP3:", data);
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching MP3:", err);
-        alert("Something went wrong.");
-      })
-      .finally(() => hideLoading());
+      if (data.success && mp3Url) {
+        const anchor = document.createElement("a");
+        anchor.href = mp3Url;
+        anchor.download = fileName;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+      } else {
+        alert("Failed to get audio link.");
+        console.error("Invalid or missing MP3:", data);
+      }
+    })
+    .catch((err) => {
+      console.error("Error fetching MP3:", err);
+      alert("Something went wrong.");
+    })
+    .finally(() => hideLoading());
 
   } else {
     status.textContent = "🚧 Downloader for this platform is not implemented yet.";
