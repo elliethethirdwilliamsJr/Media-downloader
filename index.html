@@ -199,24 +199,25 @@
   }
 
   function triggerDownload(downloadUrl, filename = "video.mp4") {
-    status.textContent = "✅ Download link ready! Starting download...";
-    status.classList.remove("text-red-400");
-    status.classList.add("text-green-400");
+  status.textContent = "✅ Downloading video...";
+  status.classList.remove("text-red-400", "text-gray-300");
+  status.classList.add("text-green-400");
 
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
+  fetch(downloadUrl)
+    .then(res => res.blob())
+    .then(blob => {
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    })
+    .catch(handleError);
+}
 
-  function handleError(err) {
-    console.error(err);
-    status.textContent = "❌ Failed to get download link. Please check the URL.";
-    status.classList.remove("text-green-400", "text-gray-300");
-    status.classList.add("text-red-400");
-  }
 </script>
 
 
