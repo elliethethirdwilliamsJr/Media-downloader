@@ -216,7 +216,8 @@
     }
 
 // ✅ YouTube MP4 Downloader
-else if (activePlatform === "youtube") {
+
+  else if (activePlatform === "youtube") {
   fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
     .then(res => res.json())
     .then(data => {
@@ -224,12 +225,22 @@ else if (activePlatform === "youtube") {
       const mp4Url = data?.data?.mp4;
 
       if (data.success && mp4Url) {
-        const anchor = document.createElement("a");
-        anchor.href = mp4Url;
-        anchor.download = "youtube-video.mp4";
-        document.body.appendChild(anchor);
-        anchor.click();
-        document.body.removeChild(anchor);
+        fetch(mp4Url)
+          .then(response => response.blob())
+          .then(blob => {
+            const blobUrl = URL.createObjectURL(blob);
+            const anchor = document.createElement("a");
+            anchor.href = blobUrl;
+            anchor.download = "youtube-video.mp4";
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+            URL.revokeObjectURL(blobUrl);
+          })
+          .catch(err => {
+            console.error("Error fetching MP4 blob:", err);
+            alert("Failed to download video.");
+          });
       } else {
         alert("Failed to get video link.");
         console.error("Invalid or missing MP4:", data);
@@ -239,8 +250,8 @@ else if (activePlatform === "youtube") {
       console.error("Error fetching MP4:", err);
       alert("Something went wrong.");
     });
-          }
-  
+}
+
 
 
     // ✅ YouTube MP3
