@@ -88,72 +88,72 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script>
-    const burgerBtn = document.getElementById('burgerBtn');
-    const sideMenu = document.getElementById('sideMenu');
-    const overlay = document.getElementById('overlay');
-    const closeBtn = document.getElementById('closeMenuBtn');
-    const title = document.getElementById('cardTitle');
-    const label = document.getElementById('cardLabel');
-    const input = document.getElementById('mediaUrl');
-    const status = document.getElementById('status');
-    const menuLinks = document.querySelectorAll('.menu-link');
+<script>
+  const burgerBtn = document.getElementById('burgerBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+  const closeBtn = document.getElementById('closeMenuBtn');
+  const title = document.getElementById('cardTitle');
+  const label = document.getElementById('cardLabel');
+  const input = document.getElementById('mediaUrl');
+  const status = document.getElementById('status');
+  const menuLinks = document.querySelectorAll('.menu-link');
 
-    const platforms = {
-      facebook: {
-        title: "Facebook Video Downloader",
-        label: "Paste Facebook Video URL:",
-        placeholder: "https://www.facebook.com/..."
-      },
-      instagram: {
-        title: "Instagram Video Downloader",
-        label: "Paste Instagram Post URL:",
-        placeholder: "https://www.instagram.com/..."
-      },
-      tiktok: {
-        title: "TikTok Video Downloader",
-        label: "Paste TikTok Video URL:",
-        placeholder: "https://www.tiktok.com/..."
-      },
-      youtube: {
-        title: "YouTube Video Downloader",
-        label: "Paste YouTube Video URL:",
-        placeholder: "https://www.youtube.com/..."
+  const platforms = {
+    facebook: {
+      title: "Facebook Video Downloader",
+      label: "Paste Facebook Video URL:",
+      placeholder: "https://www.facebook.com/..."
+    },
+    instagram: {
+      title: "Instagram Video Downloader",
+      label: "Paste Instagram Post URL:",
+      placeholder: "https://www.instagram.com/..."
+    },
+    tiktok: {
+      title: "TikTok Video Downloader",
+      label: "Paste TikTok Video URL:",
+      placeholder: "https://www.tiktok.com/..."
+    },
+    youtube: {
+      title: "YouTube Video Downloader",
+      label: "Paste YouTube Video URL:",
+      placeholder: "https://www.youtube.com/..."
+    }
+  };
+
+  burgerBtn.onclick = () => {
+    sideMenu.style.right = '0';
+    overlay.classList.remove('hidden');
+  };
+
+  closeBtn.onclick = overlay.onclick = () => {
+    sideMenu.style.right = '-100%';
+    overlay.classList.add('hidden');
+  };
+
+  menuLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const site = link.dataset.site;
+      if (platforms[site]) {
+        title.textContent = platforms[site].title;
+        label.textContent = platforms[site].label;
+        input.placeholder = platforms[site].placeholder;
+        input.value = '';
+        status.classList.add("hidden");
+
+        // Highlight active
+        menuLinks.forEach(l => l.classList.remove('menu-active'));
+        link.classList.add('menu-active');
+
+        // Close menu
+        sideMenu.style.right = '-100%';
+        overlay.classList.add('hidden');
       }
-    };
-
-    burgerBtn.onclick = () => {
-      sideMenu.style.right = '0';
-      overlay.classList.remove('hidden');
-    };
-
-    closeBtn.onclick = overlay.onclick = () => {
-      sideMenu.style.right = '-100%';
-      overlay.classList.add('hidden');
-    };
-
-    menuLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const site = link.dataset.site;
-        if (platforms[site]) {
-          title.textContent = platforms[site].title;
-          label.textContent = platforms[site].label;
-          input.placeholder = platforms[site].placeholder;
-          input.value = '';
-          status.classList.add("hidden");
-
-          // Highlight active
-          menuLinks.forEach(l => l.classList.remove('menu-active'));
-          link.classList.add('menu-active');
-
-          // Close menu
-          sideMenu.style.right = '-100%';
-          overlay.classList.add('hidden');
-        }
-      });
     });
+  });
+
   function downloadMedia() {
     const url = input.value.trim();
     const activePlatform = document.querySelector('.menu-link.menu-active')?.dataset?.site;
@@ -165,50 +165,60 @@
       return;
     }
 
-    if (activePlatform !== "facebook") {
-      status.textContent = "Downloader for this platform is not implemented yet.";
-      status.classList.remove("hidden", "text-green-400");
-      status.classList.add("text-red-400");
-      return;
-    }
-
     status.textContent = "🔄 Fetching download link...";
     status.classList.remove("hidden", "text-red-400");
     status.classList.add("text-gray-300");
 
-    const proxyAPI = `https://api.codetabs.com/v1/proxy/?quest=https://facebook-video.vercel.app/?url=${encodeURIComponent(url)}`;
+    if (activePlatform === "facebook") {
+      fetch(`https://api.codetabs.com/v1/proxy/?quest=https://facebook-video.vercel.app/?url=${encodeURIComponent(url)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.download) {
+            triggerDownload(data.download, "facebook-video.mp4");
+          } else {
+            throw new Error("Invalid Facebook video URL.");
+          }
+        })
+        .catch(handleError);
+    } else if (activePlatform === "tiktok") {
+      fetch(`https://mediadownloaderapi-olkd.onrender.com/apil/tiktok?url=${encodeURIComponent(url)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data?.video?.length) {
+            triggerDownload(data.data.video[0], "tiktok-video.mp4");
+          } else {
+            throw new Error("Invalid TikTok video URL.");
+          }
+        })
+        .catch(handleError);
+    } else {
+      status.textContent = "🚧 Downloader for this platform is not implemented yet.";
+      status.classList.remove("text-green-400");
+      status.classList.add("text-yellow-400");
+    }
+  }
 
-    fetch(proxyAPI)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.success || !data.download) throw new Error("No download link found.");
+  function triggerDownload(downloadUrl, filename = "video.mp4") {
+    status.textContent = "✅ Download link ready! Starting download...";
+    status.classList.remove("text-red-400");
+    status.classList.add("text-green-400");
 
-        const fileUrl = data.download;
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
 
-        status.textContent = "📥 Downloading video...";
-        status.classList.remove("text-red-400", "text-gray-300");
-        status.classList.add("text-green-400");
-
-        // Fetch the file and trigger download
-        fetch(fileUrl)
-          .then(res => res.blob())
-          .then(blob => {
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "facebook-video.mp4";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(a.href);
-          });
-      })
-      .catch(err => {
-        console.error(err);
-        status.textContent = "❌ Failed to download. Please check the video URL.";
-        status.classList.remove("text-green-400", "text-gray-300");
-        status.classList.add("text-red-400");
-      });
+  function handleError(err) {
+    console.error(err);
+    status.textContent = "❌ Failed to get download link. Please check the URL.";
+    status.classList.remove("text-green-400", "text-gray-300");
+    status.classList.add("text-red-400");
   }
 </script>
+
+
 </body>
 </html>
