@@ -180,7 +180,7 @@
     status.classList.remove("hidden", "text-red-400");
     status.classList.add("text-gray-300");
 
-    else if (activePlatform === "facebook") {
+    if (activePlatform === "facebook") {
   fetch(`https://mediadownloaderapi-olkd.onrender.com/api/facebook?url=${encodeURIComponent(url)}`)
     .then(res => res.json())
     .then(data => {
