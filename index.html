@@ -181,7 +181,7 @@
         })
         .catch(handleError);
     } else if (activePlatform === "tiktok") {
-      fetch(`https://mediadownloaderapi-olkd.onrender.com/apil/tiktok?url=${encodeURIComponent(url)}`)
+      fetch(`https://mediadownloaderapi-olkd.onrender.com/api/tiktok?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
         .then(data => {
           if (data.success && data.data?.video?.length) {
