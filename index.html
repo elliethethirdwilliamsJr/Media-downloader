@@ -177,9 +177,10 @@
     status.classList.remove("hidden", "text-red-400");
     status.classList.add("text-gray-300");
 
-    fetch(`https://facebook-video.vercel.app/?url=${encodeURIComponent(url)}`)
+    fetch(`https://api.codetabs.com/v1/proxy/?quest=https://facebook-video.vercel.app/?url=${encodeURIComponent(url)}`)
       .then(res => res.json())
       .then(data => {
+        alert(data)
         if (data.success && data.download) {
           status.textContent = "✅ Download link ready! Starting download...";
           status.classList.remove("text-red-400");
