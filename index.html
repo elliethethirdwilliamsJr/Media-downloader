@@ -191,7 +191,19 @@
           }
         })
         .catch(handleError);
-    } else {
+    } else if (activePlatform === "instagram") {
+  fetch(`https://mediadownloaderapi-olkd.onrender.com/api/instagram?url=${encodeURIComponent(url)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.data?.length) {
+        // Use the .url field from the first item
+        triggerDownload(data.data[0].url, "instagram-video.mp4");
+      } else {
+        throw new Error("Invalid Instagram video URL.");
+      }
+    })
+    .catch(handleError);
+}else {
       status.textContent = "🚧 Downloader for this platform is not implemented yet.";
       status.classList.remove("text-green-400");
       status.classList.add("text-yellow-400");
@@ -218,6 +230,13 @@
     .catch(handleError);
 }
 
+
+  function handleError(err) {
+    console.error(err);
+    status.textContent = "❌ Failed to get download link. Please check the URL.";
+    status.classList.remove("text-green-400", "text-gray-300");
+    status.classList.add("text-red-400");
+  }
 </script>
 
 
