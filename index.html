@@ -78,6 +78,19 @@
     </nav>
   </div>
 
+  <!-- Downloading Modal -->
+<div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+  <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-5 flex flex-col items-center shadow-xl animate-pulse">
+    <svg class="w-10 h-10 text-white animate-spin mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+    <p class="text-white text-sm font-medium text-center">Fetching and preparing your download...</p>
+  </div>
+</div>
+  
+
   <!-- Overlay -->
   <div id="overlay" class="fixed inset-0 bg-black bg-opacity-40 z-30 hidden"></div>
 
@@ -107,6 +120,15 @@
   const status = document.getElementById('status');
   const menuLinks = document.querySelectorAll('.menu-link');
 
+  const loadingModal = document.getElementById("loadingModal");
+
+function showLoading() {
+  loadingModal.classList.remove("hidden");
+}
+function hideLoading() {
+  loadingModal.classList.add("hidden");
+}
+  
   const platforms = {
     facebook: {
       title: "Facebook Reels Video Downloader",
@@ -183,6 +205,7 @@
     status.classList.add("text-gray-300");
 
     if (activePlatform === "facebook") {
+      showLoading(); 
   fetch(`https://mediadownloaderapi-olkd.onrender.com/api/facebook?url=${encodeURIComponent(url)}`)
     .then(res => res.json())
     .then(data => {
@@ -202,10 +225,12 @@
       }
     })
     .catch(handleError);
+      .finally(hideLoading)
     
     
     
     } else if (activePlatform === "tiktok") {
+      showLoading()
       fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/tiktok?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
         .then(data => {
@@ -216,7 +241,9 @@
           }
         })
         .catch(handleError);
+      .finally(hideLoading)
     } else if (activePlatform === "instagram") {
+      showLoading()
       fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/instagram?url=${encodeURIComponent(url)}`)
         .then(res => res.json())
         .then(data => {
@@ -227,10 +254,12 @@
           }
         })
         .catch(handleError);
+      .finally(hideLoading)
     }
 
 // ✅ YouTube MP4 Downloader
 else if (activePlatform === "youtube") {
+  showLoading()
   fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
     .then(res => res.json())
     .then(data => {
@@ -253,6 +282,7 @@ else if (activePlatform === "youtube") {
       console.error("Error fetching MP4:", err);
       alert("Something went wrong.");
     });
+  .finally(hideLoading)
 }
   
   
