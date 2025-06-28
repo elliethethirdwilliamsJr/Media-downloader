@@ -101,12 +101,12 @@
 
   const platforms = {
     facebook: {
-      title: "Facebook Video Downloader",
+      title: "Facebook Reels Video Downloader",
       label: "Paste Facebook Video URL:",
       placeholder: "https://www.facebook.com/..."
     },
     instagram: {
-      title: "Instagram Video Downloader",
+      title: "Instagram Reels Video Downloader",
       label: "Paste Instagram Post URL:",
       placeholder: "https://www.instagram.com/..."
     },
@@ -116,7 +116,12 @@
       placeholder: "https://www.tiktok.com/..."
     },
     youtube: {
-      title: "YouTube Video Downloader",
+      title: "YouTube Mp4 Downloader",
+      label: "Paste YouTube Video URL:",
+      placeholder: "https://www.youtube.com/..."
+    }, 
+    youtubeMp3: {
+      title: "Youtube Mp3 Downloader",
       label: "Paste YouTube Video URL:",
       placeholder: "https://www.youtube.com/..."
     }
@@ -192,18 +197,49 @@
         })
         .catch(handleError);
     } else if (activePlatform === "instagram") {
-  fetch(`https://mediadownloaderapi-olkd.onrender.com/api/instagram?url=${encodeURIComponent(url)}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.success && data.data?.length) {
-        // Use the .url field from the first item
-        triggerDownload(data.data[0].url, "instagram-video.mp4");
-      } else {
-        throw new Error("Invalid Instagram video URL.");
-      }
-    })
-    .catch(handleError);
-}else {
+      fetch(`https://mediadownloaderapi-olkd.onrender.com/api/instagram?url=${encodeURIComponent(url)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data?.length) {
+            triggerDownload(data.data[0].url, "instagram-video.mp4");
+          } else {
+            throw new Error("Invalid Instagram video URL.");
+          }
+        })
+        .catch(handleError);
+    }
+
+    // ✅ YouTube MP4
+    else if (activePlatform === "youtube") {
+      fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+        .then(res => res.json())
+        .then(data => {
+          const mp4Url = data?.data?.mp4;
+          if (data.success && mp4Url) {
+            triggerDownload(mp4Url, "youtube-video.mp4");
+          } else {
+            throw new Error("Invalid YouTube video URL.");
+          }
+        })
+        .catch(handleError);
+    }
+
+    // ✅ YouTube MP3
+    else if (activePlatform === "youtubeMp3") {
+      fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+        .then(res => res.json())
+        .then(data => {
+          const mp3Url = data?.data?.mp3;
+          if (data.success && mp3Url) {
+            triggerDownload(mp3Url, "youtube-audio.mp3");
+          } else {
+            throw new Error("Invalid YouTube audio URL.");
+          }
+        })
+        .catch(handleError);
+    }
+
+    else {
       status.textContent = "🚧 Downloader for this platform is not implemented yet.";
       status.classList.remove("text-green-400");
       status.classList.add("text-yellow-400");
@@ -211,25 +247,24 @@
   }
 
   function triggerDownload(downloadUrl, filename = "video.mp4") {
-  status.textContent = "✅ Downloading video...";
-  status.classList.remove("text-red-400", "text-gray-300");
-  status.classList.add("text-green-400");
+    status.textContent = "✅ Downloading video...";
+    status.classList.remove("text-red-400", "text-gray-300");
+    status.classList.add("text-green-400");
 
-  fetch(downloadUrl)
-    .then(res => res.blob())
-    .then(blob => {
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-    })
-    .catch(handleError);
-}
-
+    fetch(downloadUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      })
+      .catch(handleError);
+  }
 
   function handleError(err) {
     console.error(err);
@@ -237,8 +272,7 @@
     status.classList.remove("text-green-400", "text-gray-300");
     status.classList.add("text-red-400");
   }
-</script>
-
-
+             </script>
+  
 </body>
 </html>
