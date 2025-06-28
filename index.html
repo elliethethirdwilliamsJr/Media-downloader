@@ -217,25 +217,30 @@
 
 // ✅ YouTube MP4 Downloader
 else if (activePlatform === "youtube") {
-  fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
+  fetch(`https://mediadownloaderapi-olkd.onrender.com/api/youtube?url=${encodeURIComponent(url)}`)
     .then(res => res.json())
     .then(data => {
+      console.log("YT data", data);
       const mp4Url = data?.data?.mp4;
 
       if (data.success && mp4Url) {
-        // 🔍 Determine file extension
-        const ext = mp4Url.includes(".mp4") ? ".mp4" :
-                    mp4Url.includes(".webm") ? ".webm" :
-                    ""; // fallback
-
-        // ⬇️ Trigger download
-        triggerDownload(mp4Url, `youtube-video${ext}`);
+        const anchor = document.createElement("a");
+        anchor.href = mp4Url;
+        anchor.download = "youtube-video.mp4";
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
       } else {
-        throw new Error("Invalid YouTube video URL or MP4 not available.");
+        alert("Failed to get video link.");
+        console.error("Invalid or missing MP4:", data);
       }
     })
-    .catch(handleError);
-}
+    .catch(err => {
+      console.error("Error fetching MP4:", err);
+      alert("Something went wrong.");
+    });
+          }
+  
 
 
     // ✅ YouTube MP3
