@@ -225,7 +225,7 @@ function hideLoading() {
       }
     })
     .catch(handleError);
-      .finally(hideLoading)
+      .finally(() => hideLoading());
     
     
     
@@ -241,7 +241,7 @@ function hideLoading() {
           }
         })
         .catch(handleError);
-      .finally(hideLoading)
+      .finally(() => hideLoading());
     } else if (activePlatform === "instagram") {
       showLoading()
       fetch(`https://api.codetabs.com/v1/proxy/?quest=https://mediadownloaderapi-olkd.onrender.com/api/instagram?url=${encodeURIComponent(url)}`)
@@ -254,7 +254,7 @@ function hideLoading() {
           }
         })
         .catch(handleError);
-      .finally(hideLoading)
+      .finally(() => hideLoading());
     }
 
 // ✅ YouTube MP4 Downloader
@@ -282,7 +282,8 @@ else if (activePlatform === "youtube") {
       console.error("Error fetching MP4:", err);
       alert("Something went wrong.");
     });
-  .finally(hideLoading)
+
+.finally(() => hideLoading());
 }
   
   
